@@ -1,0 +1,63 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ArtisanAlly
+    network: mainnet
+    source:
+      address: "0x440a30FeC7a10d06D7A1c9391B27402cE9f8AbA8"
+      abi: ArtisanAlly
+      startBlock: 2595168
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BackerBuckPricesChange
+        - DataChanged
+        - FellowshipFounded
+        - Initialized
+        - OperatorAuthorizationChanged
+        - OperatorRevoked
+        - OwnershipTransferred
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+        - SystemFeeShareChange
+        - TokenIdDataChanged
+        - Transfer
+        - Upgraded
+      abis:
+        - name: ArtisanAlly
+          file: ./abis/ArtisanAlly.json
+      eventHandlers:
+        - event: BackerBuckPricesChange(uint256,uint256)
+          handler: handleBackerBuckPricesChange
+        - event: DataChanged(indexed bytes32,bytes)
+          handler: handleDataChanged
+        - event: FellowshipFounded(indexed address,indexed uint256,indexed address,uint256,uint256)
+          handler: handleFellowshipFounded
+        - event: Initialized(uint64)
+          handler: handleInitialized
+        - event: OperatorAuthorizationChanged(indexed address,indexed address,indexed bytes32,bytes)
+          handler: handleOperatorAuthorizationChanged
+        - event: OperatorRevoked(indexed address,indexed address,indexed bytes32,bool,bytes)
+          handler: handleOperatorRevoked
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+        - event: SystemFeeShareChange(uint256)
+          handler: handleSystemFeeShareChange
+        - event: TokenIdDataChanged(indexed bytes32,indexed bytes32,bytes)
+          handler: handleTokenIdDataChanged
+        - event: Transfer(address,indexed address,indexed address,indexed bytes32,bool,bytes)
+          handler: handleTransfer
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
+      file: ./src/artisan-ally.ts

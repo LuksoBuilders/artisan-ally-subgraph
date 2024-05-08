@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "ArtisanAlly": {
+      "address": "0x440a30FeC7a10d06D7A1c9391B27402cE9f8AbA8",
+      "startBlock": 2595168
+    }
+  }
+}
