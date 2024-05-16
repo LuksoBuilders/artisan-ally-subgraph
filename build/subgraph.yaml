@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: ApexDeities
@@ -19,7 +19,7 @@ dataSources:
         - Slot
       abis:
         - name: ApexDeities
-          file: ./abis/ApexDeities.json
+          file: ApexDeities/abis/ApexDeities.json
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
@@ -29,7 +29,7 @@ dataSources:
           handler: handleTransfer
         - event: Withdrawal(address,uint256)
           handler: handleWithdrawal
-      file: ./src/apex-deities.ts
+      file: ApexDeities/ApexDeities.wasm
   - kind: ethereum
     name: SlotManager
     network: mainnet
@@ -46,13 +46,13 @@ dataSources:
         - Slot
       abis:
         - name: SlotManager
-          file: ./abis/SlotManager.json
+          file: SlotManager/abis/SlotManager.json
       eventHandlers:
         - event: Initialized(uint64)
           handler: handleInitialized
         - event: SlotUsed(indexed uint256,uint256,uint256)
           handler: handleSlotUsed
-      file: ./src/slot-manager.ts
+      file: SlotManager/SlotManager.wasm
   - kind: ethereum
     name: ArtisanAlly
     network: mainnet
@@ -71,7 +71,7 @@ dataSources:
         - Slot
       abis:
         - name: ArtisanAlly
-          file: ./abis/ArtisanAlly.json
+          file: ArtisanAlly/abis/ArtisanAlly.json
       eventHandlers:
         - event: BackerBuckPricesChange(uint256,uint256)
           handler: handleBackerBuckPricesChange
@@ -87,7 +87,7 @@ dataSources:
           handler: handleTokenIdDataChanged
         - event: Transfer(address,indexed address,indexed address,indexed bytes32,bool,bytes)
           handler: handleTransfer
-      file: ./src/artisan-ally.ts
+      file: ArtisanAlly/ArtisanAlly.wasm
 templates:
   - name: FellowshipTemplate
     kind: ethereum/contract
@@ -98,7 +98,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/fellowship.ts
+      file: templates/FellowshipTemplate/FellowshipTemplate.wasm
       entities:
         - Fellowship
         - User
@@ -106,7 +106,7 @@ templates:
         - Endorsement
       abis:
         - name: Fellowship
-          file: ./abis/Fellowship.json
+          file: FellowshipTemplate/abis/Fellowship.json
       eventHandlers:
         - event: SettedUp(uint256,uint256)
           handler: handleSettedUp
@@ -127,14 +127,14 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/contribution.ts
+      file: templates/ContributionTemplate/ContributionTemplate.wasm
       entities:
         - Fellowship
         - User
         - Contribution
       abis:
         - name: Contribution
-          file: ./abis/Contribution.json
+          file: ContributionTemplate/abis/Contribution.json
       eventHandlers:
         - event: Contributed(indexed uint256,indexed address)
           handler: handleContributed
@@ -153,14 +153,14 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/endorsement.ts
+      file: templates/ContributionTemplate/ContributionTemplate.wasm
       entities:
         - Fellowship
         - User
         - Endorsement
       abis:
         - name: Endorsement
-          file: ./abis/Endorsement.json
+          file: EndorsementTemplate/abis/Endorsement.json
       eventHandlers:
         - event: Endorsed(indexed uint256,indexed address)
           handler: handleEndorsed

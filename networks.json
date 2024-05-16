@@ -3,6 +3,21 @@
     "ArtisanAlly": {
       "address": "0x440a30FeC7a10d06D7A1c9391B27402cE9f8AbA8",
       "startBlock": 2595168
+    },
+    "LevelManager": {
+      "address": "0xa33aD2E0984D8bAa596D12937a9D68dc9C68Bd9d"
+    },
+    "SlotManager": {
+      "address": "0x619D964e41bf82e42322319bF0480925EEEc385a"
+    },
+    "FeeCollector": {
+      "address": "0x4c0aBBef8584e3c9abb39dBA62991749a0F966AC"
+    },
+    "ApexDeities": {
+      "address": "0xb4E32a20aa27B5891Bfa592c392c9858A1DD3945"
+    },
+    "HolyShit": {
+      "address": "0xAd28D1A66597f0EC79829A02Db9CCCf361f2b8Ac"
     }
   }
 }
