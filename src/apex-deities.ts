@@ -163,7 +163,14 @@ export function handleTransfer(event: TransferEvent): void {
   } else {
     let deity = Deity.load(event.params.tokenId);
     if (deity) {
-      deity.owner = event.params.to;
+      let owner = User.load(event.params.to);
+
+      if (!owner) {
+        owner = new User(event.params.to);
+        owner.holyShitsBalance = BigInt.fromU32(0);
+        owner.save();
+      }
+      deity.owner = owner.id;
       deity.save();
     }
   }
