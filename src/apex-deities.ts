@@ -16,7 +16,7 @@ import {
 } from "../generated/ApexDeities/ApexDeities";
 import { Deity, User, Slot } from "../generated/schema";
 import { log } from "@graphprotocol/graph-ts";
-import { createSlot } from "./utils";
+import { createSlot, getSystemFeeAtomCollected } from "./utils";
 
 const AddressZero = Address.fromString(
   "0x0000000000000000000000000000000000000000"
@@ -103,6 +103,8 @@ export function handleTransfer(event: TransferEvent): void {
 
     deity.xp = BigInt.fromU32(0);
     deity.level = BigInt.fromU32(0);
+
+    deity.systemFeeAtomCollected = getSystemFeeAtomCollected().id;
 
     let owner = User.load(event.params.to);
 

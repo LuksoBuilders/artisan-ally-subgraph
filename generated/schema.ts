@@ -554,6 +554,19 @@ export class Deity extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
+  get systemFeeAtomCollected(): Bytes {
+    let value = this.get("systemFeeAtomCollected");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set systemFeeAtomCollected(value: Bytes) {
+    this.set("systemFeeAtomCollected", Value.fromBytes(value));
+  }
+
   get tokenIdNumber(): BigInt {
     let value = this.get("tokenIdNumber");
     if (!value || value.kind == ValueKind.NULL) {

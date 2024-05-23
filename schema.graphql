@@ -40,6 +40,7 @@ type UnkownEntity @entity {
 
 type Deity @entity {
   id: Bytes!
+  systemFeeAtomCollected: SystemFeeAtomCollected!
   tokenIdNumber: BigInt!
   metadata: Bytes
   xp: BigInt!

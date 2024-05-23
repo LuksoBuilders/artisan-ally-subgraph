@@ -49,6 +49,7 @@ export function getSystemFeeAtomCollected(): SystemFeeAtomCollected {
   if (!systemFeeAtomCollected) {
     systemFeeAtomCollected = new SystemFeeAtomCollected(Bytes.fromI32(0));
     systemFeeAtomCollected.amount = BigInt.fromI32(0);
+    systemFeeAtomCollected.save();
   }
   return systemFeeAtomCollected;
 }

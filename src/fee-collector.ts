@@ -48,6 +48,7 @@ export function handleFeeInserted(event: FeeInsertedEvent): void {
   systemFeeAtomCollected.amount = systemFeeAtomCollected.amount.plus(
     event.params.collectedAtomAmount
   );
+  systemFeeAtomCollected.save();
 }
 
 export function handleInitialized(event: InitializedEvent): void {}
