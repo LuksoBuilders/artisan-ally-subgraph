@@ -45,9 +45,7 @@ export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {
 export function handleFeeInserted(event: FeeInsertedEvent): void {
   let systemFeeAtomCollected = getSystemFeeAtomCollected();
 
-  systemFeeAtomCollected.amount = systemFeeAtomCollected.amount.plus(
-    event.params.collectedAtomAmount
-  );
+  systemFeeAtomCollected.amount = event.params.collectedAtomAmount;
   systemFeeAtomCollected.save();
 }
 
