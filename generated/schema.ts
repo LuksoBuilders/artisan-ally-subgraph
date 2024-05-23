@@ -649,6 +649,19 @@ export class Deity extends Entity {
     this.set("directFee", Value.fromBigInt(value));
   }
 
+  get harvested(): BigInt {
+    let value = this.get("harvested");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set harvested(value: BigInt) {
+    this.set("harvested", Value.fromBigInt(value));
+  }
+
   get tier(): string {
     let value = this.get("tier");
     if (!value || value.kind == ValueKind.NULL) {

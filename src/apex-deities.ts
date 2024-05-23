@@ -16,6 +16,7 @@ import {
 } from "../generated/ApexDeities/ApexDeities";
 import { Deity, User, Slot } from "../generated/schema";
 import { log } from "@graphprotocol/graph-ts";
+import { createSlot } from "./utils";
 
 const AddressZero = Address.fromString(
   "0x0000000000000000000000000000000000000000"
@@ -95,32 +96,6 @@ function getTokenTier(tokenIdNumber: BigInt): string {
   }
 }
 
-function createSlot(
-  deityId: Bytes,
-  deityTokenIdNumber: BigInt,
-  index: BigInt
-): void {
-  let tokenIdStr: string = deityTokenIdNumber.toHexString();
-  let indexStr: string = index.toHexString();
-
-  // Concatenate the strings
-  let concatenatedStr: string = tokenIdStr + indexStr;
-
-  log.warning("Creating a slot", [
-    deityTokenIdNumber.toHexString(),
-    index.toHexString(),
-    concatenatedStr,
-  ]);
-
-  let slot = new Slot(
-    Bytes.fromByteArray(crypto.keccak256(ByteArray.fromUTF8(concatenatedStr)))
-  );
-  slot.deity = deityId;
-  slot.index = index;
-  slot.usedAt = BigInt.fromI32(0);
-  slot.save();
-}
-
 export function handleTransfer(event: TransferEvent): void {
   if (event.params.from == AddressZero) {
     // This is a mint;
@@ -140,6 +115,7 @@ export function handleTransfer(event: TransferEvent): void {
     deity.owner = owner.id;
     deity.withdrawable = BigInt.fromU32(0);
     deity.directFee = BigInt.fromU32(0);
+    deity.harvested = BigInt.fromU32(0);
 
     deity.tokenIdNumber = getTokenIdNumber(event.params.tokenId);
     deity.tier = getTokenTier(deity.tokenIdNumber);

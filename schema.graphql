@@ -47,6 +47,7 @@ type Deity @entity {
   owner: User!
   withdrawable: BigInt!
   directFee: BigInt!
+  harvested: BigInt!
   tier: String!
   slots: [Slot!]! @derivedFrom(field: "deity")
   portfolio: [Fellowship!]! @derivedFrom(field: "founder")

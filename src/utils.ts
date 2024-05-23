@@ -5,7 +5,13 @@ import {
   Bytes,
   crypto,
 } from "@graphprotocol/graph-ts";
-import { User, BackerBuck, SystemFeeAtomCollected } from "../generated/schema";
+import {
+  User,
+  BackerBuck,
+  SystemFeeAtomCollected,
+  Slot,
+} from "../generated/schema";
+import { log } from "@graphprotocol/graph-ts";
 
 export function getUser(userAddress: Address): User {
   let user = User.load(userAddress);
@@ -54,4 +60,30 @@ export function getBytesFromTokenIdNumber(tokenIdNumber: BigInt): Bytes {
   return Bytes.fromHexString(
     "0x00000000000000000000000000000000000000000000000000000000000000"
   ).concat(Bytes.fromByteArray(reversedTokenIdBytes));
+}
+
+export function createSlot(
+  deityId: Bytes,
+  deityTokenIdNumber: BigInt,
+  index: BigInt
+): void {
+  let tokenIdStr: string = deityTokenIdNumber.toHexString();
+  let indexStr: string = index.toHexString();
+
+  // Concatenate the strings
+  let concatenatedStr: string = tokenIdStr + indexStr;
+
+  log.warning("Creating a slot", [
+    deityTokenIdNumber.toHexString(),
+    index.toHexString(),
+    concatenatedStr,
+  ]);
+
+  let slot = new Slot(
+    Bytes.fromByteArray(crypto.keccak256(ByteArray.fromUTF8(concatenatedStr)))
+  );
+  slot.deity = deityId;
+  slot.index = index;
+  slot.usedAt = BigInt.fromI32(0);
+  slot.save();
 }

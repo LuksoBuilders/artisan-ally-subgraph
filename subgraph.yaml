@@ -79,6 +79,29 @@ dataSources:
           handler: handleDeityHarvested
       file: ./src/fee-collector.ts
   - kind: ethereum
+    name: LevelManager
+    network: mainnet
+    source:
+      address: "0x22957D2Fb820b7F3F0DF5503e77aCC1A5D3a66F7"
+      abi: LevelManager
+      startBlock: 2508728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deity
+        - Slot
+      abis:
+        - name: LevelManager
+          file: ./abis/LevelManager.json
+      eventHandlers:
+        - event: XPIncreased(uint256,uint256)
+          handler: handleXPIncreased
+        - event: LevelIncreased(uint256,uint256,uint256)
+          handler: handleLevelIncreased
+      file: ./src/level-manager.ts
+  - kind: ethereum
     name: ArtisanAlly
     network: mainnet
     source:

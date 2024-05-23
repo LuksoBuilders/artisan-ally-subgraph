@@ -26,7 +26,13 @@ export function handleCollectorInitialized(
   event: CollectorInitializedEvent
 ): void {}
 
-export function handleDeityHarvested(event: DeityHarvestedEvent): void {}
+export function handleDeityHarvested(event: DeityHarvestedEvent): void {
+  let deity = Deity.load(getBytesFromTokenIdNumber(event.params.deityId));
+  if (deity) {
+    deity.harvested = deity.harvested.plus(event.params.amount);
+    deity.save();
+  }
+}
 
 export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {
   let deity = Deity.load(getBytesFromTokenIdNumber(event.params.founder));
@@ -34,17 +40,15 @@ export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {
     deity.directFee = deity.directFee.plus(event.params.amount);
     deity.save();
   }
-
-  let uk = UnkownEntity.load(getBytesFromTokenIdNumber(event.params.founder));
-  if (!uk) {
-    uk = new UnkownEntity(getBytesFromTokenIdNumber(event.params.founder));
-    uk.number = event.params.amount;
-  }
-
-  uk.save();
 }
 
-export function handleFeeInserted(event: FeeInsertedEvent): void {}
+export function handleFeeInserted(event: FeeInsertedEvent): void {
+  let systemFeeAtomCollected = getSystemFeeAtomCollected();
+
+  systemFeeAtomCollected.amount = systemFeeAtomCollected.amount.plus(
+    event.params.collectedAtomAmount
+  );
+}
 
 export function handleInitialized(event: InitializedEvent): void {}
 
