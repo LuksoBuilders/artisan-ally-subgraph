@@ -48,7 +48,10 @@ export function getSystemFeeAtomCollected(): SystemFeeAtomCollected {
 }
 
 export function getBytesFromTokenIdNumber(tokenIdNumber: BigInt): Bytes {
-  let tokenIdBytes = Bytes.fromBigInt(tokenIdNumber);
-  let reversedTokenIdBytes = Bytes.fromUint8Array(tokenIdBytes.reverse());
-  return Bytes.fromHexString(reversedTokenIdBytes.toHexString());
+  let reversedTokenIdBytes = Bytes.fromBigInt(tokenIdNumber);
+
+  reversedTokenIdBytes.reverse();
+  return Bytes.fromHexString(
+    "0x00000000000000000000000000000000000000000000000000000000000000"
+  ).concat(Bytes.fromByteArray(reversedTokenIdBytes));
 }
