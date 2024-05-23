@@ -33,6 +33,11 @@ type SystemFeeAtomCollected @entity {
   amount: BigInt!
 }
 
+type UnkownEntity @entity {
+  id: Bytes!
+  number: BigInt!
+}
+
 type Deity @entity {
   id: Bytes!
   tokenIdNumber: BigInt!

@@ -456,6 +456,63 @@ export class SystemFeeAtomCollected extends Entity {
   }
 }
 
+export class UnkownEntity extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UnkownEntity entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type UnkownEntity must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UnkownEntity", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): UnkownEntity | null {
+    return changetype<UnkownEntity | null>(
+      store.get_in_block("UnkownEntity", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): UnkownEntity | null {
+    return changetype<UnkownEntity | null>(
+      store.get("UnkownEntity", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get number(): BigInt {
+    let value = this.get("number");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set number(value: BigInt) {
+    this.set("number", Value.fromBigInt(value));
+  }
+}
+
 export class Deity extends Entity {
   constructor(id: Bytes) {
     super();

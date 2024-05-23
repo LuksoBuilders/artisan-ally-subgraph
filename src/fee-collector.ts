@@ -13,7 +13,7 @@ import {
   RoleRevoked as RoleRevokedEvent,
   Upgraded as UpgradedEvent,
 } from "../generated/FeeCollector/FeeCollector";
-import { Deity } from "../generated/schema";
+import { Deity, UnkownEntity } from "../generated/schema";
 import { getSystemFeeAtomCollected, getBytesFromTokenIdNumber } from "./utils";
 
 export function handleBuilderTeamChanged(
@@ -34,6 +34,14 @@ export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {
     deity.directFee = deity.directFee.plus(event.params.amount);
     deity.save();
   }
+
+  let uk = UnkownEntity.load(getBytesFromTokenIdNumber(event.params.founder));
+  if (!uk) {
+    uk = new UnkownEntity(getBytesFromTokenIdNumber(event.params.founder));
+    uk.number = event.params.amount;
+  }
+
+  uk.save();
 }
 
 export function handleFeeInserted(event: FeeInsertedEvent): void {}
