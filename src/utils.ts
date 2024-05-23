@@ -5,7 +5,7 @@ import {
   Bytes,
   crypto,
 } from "@graphprotocol/graph-ts";
-import { User, BackerBuck } from "../generated/schema";
+import { User, BackerBuck, SystemFeeAtomCollected } from "../generated/schema";
 
 export function getUser(userAddress: Address): User {
   let user = User.load(userAddress);
@@ -36,4 +36,19 @@ export function getBackerBuck(fellowship: Address, owner: Address): BackerBuck {
     backerBuck.fellowship = fellowship;
   }
   return backerBuck;
+}
+
+export function getSystemFeeAtomCollected(): SystemFeeAtomCollected {
+  let systemFeeAtomCollected = SystemFeeAtomCollected.load(Bytes.fromI32(0));
+  if (!systemFeeAtomCollected) {
+    systemFeeAtomCollected = new SystemFeeAtomCollected(Bytes.fromI32(0));
+    systemFeeAtomCollected.amount = BigInt.fromI32(0);
+  }
+  return systemFeeAtomCollected;
+}
+
+export function getBytesFromTokenIdNumber(tokenIdNumber: BigInt): Bytes {
+  let tokenIdBytes = Bytes.fromBigInt(tokenIdNumber);
+  let reversedTokenIdBytes = Bytes.fromUint8Array(tokenIdBytes.reverse());
+  return Bytes.fromHexString(reversedTokenIdBytes.toHexString());
 }

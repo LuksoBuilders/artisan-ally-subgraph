@@ -28,6 +28,11 @@ type Fellowship @entity {
   artisan: User
 }
 
+type SystemFeeAtomCollected @entity {
+  id: Bytes!
+  amount: BigInt!
+}
+
 type Deity @entity {
   id: Bytes!
   tokenIdNumber: BigInt!
@@ -36,6 +41,7 @@ type Deity @entity {
   level: BigInt!
   owner: User!
   withdrawable: BigInt!
+  directFee: BigInt!
   tier: String!
   slots: [Slot!]! @derivedFrom(field: "deity")
   portfolio: [Fellowship!]! @derivedFrom(field: "founder")

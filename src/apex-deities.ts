@@ -139,6 +139,7 @@ export function handleTransfer(event: TransferEvent): void {
 
     deity.owner = owner.id;
     deity.withdrawable = BigInt.fromU32(0);
+    deity.directFee = BigInt.fromU32(0);
 
     deity.tokenIdNumber = getTokenIdNumber(event.params.tokenId);
     deity.tier = getTokenTier(deity.tokenIdNumber);

@@ -54,6 +54,31 @@ dataSources:
           handler: handleSlotUsed
       file: ./src/slot-manager.ts
   - kind: ethereum
+    name: FeeCollector
+    network: mainnet
+    source:
+      address: "0xd7cD9902ec51010b99c7577fDa2F4c335A17E75f"
+      abi: FeeCollector
+      startBlock: 2508728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deity
+        - SystemFeeAtomCollected
+      abis:
+        - name: FeeCollector
+          file: ./abis/FeeCollector.json
+      eventHandlers:
+        - event: DirectFeeInserted(uint256,uint256)
+          handler: handleDirectFeeInserted
+        - event: FeeInserted(uint256)
+          handler: handleFeeInserted
+        - event: DeityHarvested(indexed uint256,uint256)
+          handler: handleDeityHarvested
+      file: ./src/fee-collector.ts
+  - kind: ethereum
     name: ArtisanAlly
     network: mainnet
     source:

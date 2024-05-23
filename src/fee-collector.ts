@@ -13,7 +13,8 @@ import {
   RoleRevoked as RoleRevokedEvent,
   Upgraded as UpgradedEvent,
 } from "../generated/FeeCollector/FeeCollector";
-import {} from "../generated/schema";
+import { Deity } from "../generated/schema";
+import { getSystemFeeAtomCollected, getBytesFromTokenIdNumber } from "./utils";
 
 export function handleBuilderTeamChanged(
   event: BuilderTeamChangedEvent
@@ -27,7 +28,13 @@ export function handleCollectorInitialized(
 
 export function handleDeityHarvested(event: DeityHarvestedEvent): void {}
 
-export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {}
+export function handleDirectFeeInserted(event: DirectFeeInsertedEvent): void {
+  let deity = Deity.load(getBytesFromTokenIdNumber(event.params.founder));
+  if (deity) {
+    deity.directFee = deity.directFee.plus(event.params.amount);
+    deity.save();
+  }
+}
 
 export function handleFeeInserted(event: FeeInsertedEvent): void {}
 
