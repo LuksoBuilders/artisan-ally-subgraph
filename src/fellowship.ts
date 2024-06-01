@@ -103,6 +103,7 @@ export function handleBackerBuckMinted(event: BackerBuckMinted): void {
   globalVars.totalFeeCollected = globalVars.totalFeeCollected.plus(
     event.params.systemFee
   );
+  globalVars.save();
 }
 
 export function handleDataChangedForFellowship(event: DataChanged): void {
