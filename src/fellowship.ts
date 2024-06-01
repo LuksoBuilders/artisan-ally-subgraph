@@ -17,7 +17,7 @@ import {
   EndorsementTemplate,
   ContributionTemplate,
 } from "../generated/templates";
-import { getUser, getBackerBuck } from "./utils";
+import { getGlobalVars, getBackerBuck } from "./utils";
 
 const AddressZero = Address.fromString(
   "0x0000000000000000000000000000000000000000"
@@ -91,8 +91,18 @@ export function handleBackerBuckMinted(event: BackerBuckMinted): void {
       fellowship.priceGrowth,
       fellowship.totalSupply
     );
+    fellowship.raisedAmount = fellowship.raisedAmount.plus(
+      event.params.artisanShare
+    );
     fellowship.save();
   }
+  let globalVars = getGlobalVars();
+  globalVars.totalRaisedAmount = globalVars.totalRaisedAmount.plus(
+    event.params.artisanShare
+  );
+  globalVars.totalFeeCollected = globalVars.totalFeeCollected.plus(
+    event.params.systemFee
+  );
 }
 
 export function handleDataChangedForFellowship(event: DataChanged): void {

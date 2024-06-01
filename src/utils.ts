@@ -10,6 +10,7 @@ import {
   BackerBuck,
   SystemFeeAtomCollected,
   Slot,
+  GlobalVars,
 } from "../generated/schema";
 import { log } from "@graphprotocol/graph-ts";
 
@@ -42,6 +43,17 @@ export function getBackerBuck(fellowship: Address, owner: Address): BackerBuck {
     backerBuck.fellowship = fellowship;
   }
   return backerBuck;
+}
+
+export function getGlobalVars(): GlobalVars {
+  let globalVars = GlobalVars.load(Bytes.fromI32(0));
+  if (!globalVars) {
+    globalVars = new GlobalVars(Bytes.fromI32(0));
+    globalVars.totalFeeCollected = BigInt.fromI32(0);
+    globalVars.totalRaisedAmount = BigInt.fromI32(0);
+    globalVars.save();
+  }
+  return globalVars;
 }
 
 export function getSystemFeeAtomCollected(): SystemFeeAtomCollected {

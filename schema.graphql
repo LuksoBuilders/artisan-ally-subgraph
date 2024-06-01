@@ -9,6 +9,12 @@ type User @entity {
   holyShitsBalance: BigInt!
 }
 
+type GlobalVars @entity {
+  id: Bytes!
+  totalFeeCollected: BigInt!
+  totalRaisedAmount: BigInt!
+}
+
 type Fellowship @entity {
   id: Bytes!
   address: Bytes!
@@ -26,6 +32,7 @@ type Fellowship @entity {
   endorsements: [Endorsement!]! @derivedFrom(field: "fellowship")
   founder: Deity
   artisan: User
+  raisedAmount: BigInt!
 }
 
 type SystemFeeAtomCollected @entity {

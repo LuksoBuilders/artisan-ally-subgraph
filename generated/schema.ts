@@ -126,6 +126,76 @@ export class User extends Entity {
   }
 }
 
+export class GlobalVars extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save GlobalVars entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type GlobalVars must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("GlobalVars", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): GlobalVars | null {
+    return changetype<GlobalVars | null>(
+      store.get_in_block("GlobalVars", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): GlobalVars | null {
+    return changetype<GlobalVars | null>(
+      store.get("GlobalVars", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get totalFeeCollected(): BigInt {
+    let value = this.get("totalFeeCollected");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set totalFeeCollected(value: BigInt) {
+    this.set("totalFeeCollected", Value.fromBigInt(value));
+  }
+
+  get totalRaisedAmount(): BigInt {
+    let value = this.get("totalRaisedAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set totalRaisedAmount(value: BigInt) {
+    this.set("totalRaisedAmount", Value.fromBigInt(value));
+  }
+}
+
 export class Fellowship extends Entity {
   constructor(id: Bytes) {
     super();
@@ -393,6 +463,19 @@ export class Fellowship extends Entity {
     } else {
       this.set("artisan", Value.fromBytes(<Bytes>value));
     }
+  }
+
+  get raisedAmount(): BigInt {
+    let value = this.get("raisedAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set raisedAmount(value: BigInt) {
+    this.set("raisedAmount", Value.fromBigInt(value));
   }
 }
 
