@@ -17,12 +17,16 @@ export function handleLevelIncreased(event: LevelIncreasedEvent): void {
   let deityId = getBytesFromTokenIdNumber(event.params.deityId);
   let deity = Deity.load(deityId);
   if (deity) {
-    for (
-      let i = deity.level;
-      i < event.params.newLevel;
-      i = i.plus(BigInt.fromI32(1))
-    ) {
-      createSlot(deityId, event.params.deityId, i.plus(BigInt.fromI32(1)));
+    for (let i = deity.level.toI32(); i < event.params.newLevel.toI32(); i++) {
+      if (deity.tier == "S") {
+        createSlot(deityId, event.params.deityId, BigInt.fromI32(3 + i + 1));
+      } else if (deity.tier == "A") {
+        createSlot(deityId, event.params.deityId, BigInt.fromI32(2 + i + 1));
+      } else if (deity.tier == "B") {
+        createSlot(deityId, event.params.deityId, BigInt.fromI32(1 + i + 1));
+      } else if (deity.tier == "C") {
+        createSlot(deityId, event.params.deityId, BigInt.fromI32(0 + i + 1));
+      }
     }
     deity.level = event.params.newLevel;
     deity.save();
