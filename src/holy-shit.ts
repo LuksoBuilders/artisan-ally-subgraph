@@ -1,11 +1,25 @@
 import {
+  Address,
+  BigInt,
+  ByteArray,
+  Bytes,
+  crypto,
+} from "@graphprotocol/graph-ts";
+import {
   DataChanged as DataChangedEvent,
   OperatorAuthorizationChanged as OperatorAuthorizationChangedEvent,
   OperatorRevoked as OperatorRevokedEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
   Transfer as TransferEvent,
+  HolyShit
 } from "../generated/HolyShit/HolyShit";
-import {} from "../generated/schema";
+import { Deity, User, Slot } from "../generated/schema";
+import { getUser } from "./utils";
+
+
+const AddressZero = Address.fromString(
+  "0x0000000000000000000000000000000000000000"
+);
 
 export function handleDataChanged(event: DataChangedEvent): void {
   //let entity = new DataChanged(
@@ -57,6 +71,24 @@ export function handleOperatorRevoked(event: OperatorRevokedEvent): void {
 
 export function handleOwnershipTransferred(
   event: OwnershipTransferredEvent
-): void {}
+): void { }
 
-export function handleTransfer(event: TransferEvent): void {}
+export function handleTransfer(event: TransferEvent): void {
+  let fromAddress = event.params.from;
+  let toAddress = event.params.to;
+  let amount = event.params.amount;
+
+  
+
+  // Handle the 'to' address balance update
+  let to = getUser(toAddress);
+  to.holyShitsBalance = to.holyShitsBalance.plus(amount);
+  to.save();
+
+  // Handle the 'from' address balance update
+  if (fromAddress != AddressZero) {
+    let from = getUser(fromAddress);
+    from.holyShitsBalance = from.holyShitsBalance.minus(amount);
+    from.save();
+  }
+}

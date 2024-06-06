@@ -40,6 +40,8 @@ export function getBackerBuck(fellowship: Address, owner: Address): BackerBuck {
     backerBuck = new BackerBuck(getBackerBuckTokenId(fellowship, owner));
     backerBuck.owner = getUser(owner).id;
     backerBuck.amount = BigInt.fromI32(0);
+    backerBuck.contributions = BigInt.fromI32(0);
+    backerBuck.purifiable = BigInt.fromI32(0);
     backerBuck.fellowship = fellowship;
   }
   return backerBuck;
@@ -51,6 +53,7 @@ export function getGlobalVars(): GlobalVars {
     globalVars = new GlobalVars(Bytes.fromI32(0));
     globalVars.totalFeeCollected = BigInt.fromI32(0);
     globalVars.totalRaisedAmount = BigInt.fromI32(0);
+    globalVars.divineDungDepotBalance = BigInt.fromI32(0);
     globalVars.save();
   }
   return globalVars;

@@ -13,6 +13,7 @@ type GlobalVars @entity {
   id: Bytes!
   totalFeeCollected: BigInt!
   totalRaisedAmount: BigInt!
+  divineDungDepotBalance: BigInt!
 }
 
 type Fellowship @entity {
@@ -22,7 +23,9 @@ type Fellowship @entity {
   symbol: String
   metadata: Bytes
   contributionAddress: Bytes
+  contributionAmount: BigInt!
   endorsementAddress: Bytes
+  endorsementAmount: BigInt!
   priceGrowth: BigInt
   initialPrice: BigInt
   currentPrice: BigInt
@@ -66,6 +69,8 @@ type BackerBuck @entity {
   owner: User!
   fellowship: Fellowship!
   amount: BigInt!
+  contributions: BigInt!
+  purifiable: BigInt!
 }
 
 type Contribution @entity {

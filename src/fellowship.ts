@@ -4,6 +4,7 @@ import {
   ByteArray,
   Bytes,
   crypto,
+  DataSourceContext
 } from "@graphprotocol/graph-ts";
 import {
   DataChanged,
@@ -51,7 +52,10 @@ export function handleSubInitialized(event: SubIntialization): void {
   if (fellowship) {
     fellowship.contributionAddress = event.params.contributionTokenAddress;
     fellowship.endorsementAddress = event.params.endorsementTokenAddress;
-    //ContributionTemplate.create(event.params.contributionTokenAddress);
+
+    let context = new DataSourceContext();
+    context.setBytes('fellowshipId', event.address)
+    ContributionTemplate.createWithContext(event.params.contributionTokenAddress, context);
     //EndorsementTemplate.create(event.params.endorsementTokenAddress);
 
     fellowship.save();
@@ -133,16 +137,36 @@ export function handleDataChangedForFellowship(event: DataChanged): void {
 }
 
 export function handleTransfer(event: Transfer): void {
-  if (event.params.from == AddressZero) {
-    let toBackerBuck = getBackerBuck(event.address, event.params.to);
-    toBackerBuck.amount = toBackerBuck.amount.plus(event.params.amount);
-    toBackerBuck.save();
-  } else {
-    let fromBackerBuck = getBackerBuck(event.address, event.params.from);
-    fromBackerBuck.amount = fromBackerBuck.amount.minus(event.params.amount);
-    fromBackerBuck.save();
-    let toBackerBuck = getBackerBuck(event.address, event.params.to);
-    toBackerBuck.amount = toBackerBuck.amount.plus(event.params.amount);
-    toBackerBuck.save();
+  let fellowship = Fellowship.load(event.address);
+  if (fellowship) {
+    let contributionAddress = fellowship.contributionAddress;
+    if (contributionAddress) {
+      if (event.params.from.toHexString() == contributionAddress.toHexString()) {
+        // handling purification
+        let backerBuck = getBackerBuck(event.address, event.params.to);
+        backerBuck.purifiable = backerBuck.purifiable.minus(event.params.amount);
+        backerBuck.save();
+        let globalVars = getGlobalVars();
+        globalVars.divineDungDepotBalance = globalVars.divineDungDepotBalance.plus(event.params.amount.times(BigInt.fromI32(100).times((BigInt.fromI32(10).pow(18)))));
+        globalVars.save();
+      }
+
+      if (event.params.from == AddressZero) {
+        if (event.params.to != contributionAddress) {
+          let toBackerBuck = getBackerBuck(event.address, event.params.to);
+          toBackerBuck.amount = toBackerBuck.amount.plus(event.params.amount);
+          toBackerBuck.save();
+        }
+      } else {
+        let fromBackerBuck = getBackerBuck(event.address, event.params.from);
+        fromBackerBuck.amount = fromBackerBuck.amount.minus(event.params.amount);
+        fromBackerBuck.save();
+        if (event.params.to != contributionAddress) {
+          let toBackerBuck = getBackerBuck(event.address, event.params.to);
+          toBackerBuck.amount = toBackerBuck.amount.plus(event.params.amount);
+          toBackerBuck.save();
+        }
+      }
+    }
   }
 }

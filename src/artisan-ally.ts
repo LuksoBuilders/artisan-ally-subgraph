@@ -304,6 +304,8 @@ export function handleTransfer(event: Transfer): void {
     FellowshipTemplate.create(fellowshipAddress);
     fellowship.totalSupply = BigInt.fromI32(0);
     fellowship.raisedAmount = BigInt.fromI32(0);
+    fellowship.contributionAmount = BigInt.fromI32(0);
+    fellowship.endorsementAmount = BigInt.fromI32(0);
 
     fellowship.address = fellowshipAddress;
     let artisan = User.load(event.params.to);

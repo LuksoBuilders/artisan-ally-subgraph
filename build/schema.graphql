@@ -9,6 +9,13 @@ type User @entity {
   holyShitsBalance: BigInt!
 }
 
+type GlobalVars @entity {
+  id: Bytes!
+  totalFeeCollected: BigInt!
+  totalRaisedAmount: BigInt!
+  divineDungDepotBalance: BigInt!
+}
+
 type Fellowship @entity {
   id: Bytes!
   address: Bytes!
@@ -16,7 +23,9 @@ type Fellowship @entity {
   symbol: String
   metadata: Bytes
   contributionAddress: Bytes
+  contributionAmount: BigInt!
   endorsementAddress: Bytes
+  endorsementAmount: BigInt!
   priceGrowth: BigInt
   initialPrice: BigInt
   currentPrice: BigInt
@@ -26,6 +35,7 @@ type Fellowship @entity {
   endorsements: [Endorsement!]! @derivedFrom(field: "fellowship")
   founder: Deity
   artisan: User
+  raisedAmount: BigInt!
 }
 
 type SystemFeeAtomCollected @entity {
@@ -33,8 +43,14 @@ type SystemFeeAtomCollected @entity {
   amount: BigInt!
 }
 
+type UnkownEntity @entity {
+  id: Bytes!
+  number: BigInt!
+}
+
 type Deity @entity {
   id: Bytes!
+  systemFeeAtomCollected: SystemFeeAtomCollected!
   tokenIdNumber: BigInt!
   metadata: Bytes
   xp: BigInt!
@@ -42,6 +58,7 @@ type Deity @entity {
   owner: User!
   withdrawable: BigInt!
   directFee: BigInt!
+  harvested: BigInt!
   tier: String!
   slots: [Slot!]! @derivedFrom(field: "deity")
   portfolio: [Fellowship!]! @derivedFrom(field: "founder")
@@ -52,6 +69,8 @@ type BackerBuck @entity {
   owner: User!
   fellowship: Fellowship!
   amount: BigInt!
+  contributions: BigInt!
+  purifiable: BigInt!
 }
 
 type Contribution @entity {

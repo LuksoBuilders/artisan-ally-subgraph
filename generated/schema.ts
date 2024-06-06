@@ -194,6 +194,19 @@ export class GlobalVars extends Entity {
   set totalRaisedAmount(value: BigInt) {
     this.set("totalRaisedAmount", Value.fromBigInt(value));
   }
+
+  get divineDungDepotBalance(): BigInt {
+    let value = this.get("divineDungDepotBalance");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set divineDungDepotBalance(value: BigInt) {
+    this.set("divineDungDepotBalance", Value.fromBigInt(value));
+  }
 }
 
 export class Fellowship extends Entity {
@@ -320,6 +333,19 @@ export class Fellowship extends Entity {
     }
   }
 
+  get contributionAmount(): BigInt {
+    let value = this.get("contributionAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set contributionAmount(value: BigInt) {
+    this.set("contributionAmount", Value.fromBigInt(value));
+  }
+
   get endorsementAddress(): Bytes | null {
     let value = this.get("endorsementAddress");
     if (!value || value.kind == ValueKind.NULL) {
@@ -335,6 +361,19 @@ export class Fellowship extends Entity {
     } else {
       this.set("endorsementAddress", Value.fromBytes(<Bytes>value));
     }
+  }
+
+  get endorsementAmount(): BigInt {
+    let value = this.get("endorsementAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set endorsementAmount(value: BigInt) {
+    this.set("endorsementAmount", Value.fromBigInt(value));
   }
 
   get priceGrowth(): BigInt | null {
@@ -872,6 +911,32 @@ export class BackerBuck extends Entity {
 
   set amount(value: BigInt) {
     this.set("amount", Value.fromBigInt(value));
+  }
+
+  get contributions(): BigInt {
+    let value = this.get("contributions");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set contributions(value: BigInt) {
+    this.set("contributions", Value.fromBigInt(value));
+  }
+
+  get purifiable(): BigInt {
+    let value = this.get("purifiable");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set purifiable(value: BigInt) {
+    this.set("purifiable", Value.fromBigInt(value));
   }
 }
 
