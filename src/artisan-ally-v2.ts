@@ -23,7 +23,7 @@ import {
   Upgraded,
 } from "../generated/ArtisanAlly/ArtisanAlly";
 import { User, Fellowship, Deity, Slot } from "../generated/schema";
-import { FellowshipTemplateV2  } from "../generated/templates";
+import { FellowshipTemplateV2 } from "../generated/templates";
 import { getUser } from "./utils";
 
 const AddressZero = Address.fromString(
@@ -295,37 +295,44 @@ export function handleSystemFeeShareChange(event: SystemFeeShareChange): void {}
 export function handleTokenIdDataChanged(event: TokenIdDataChanged): void {}
 
 export function handleTransfer(event: Transfer): void {
-  if (event.params.from == AddressZero) {
-    let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
-    let fellowship = new Fellowship(Bytes.fromHexString(tokenAddress));
-    fellowship.version = BigInt.fromI32(2);
-    let fellowshipAddress = Address.fromBytes(
-      Bytes.fromHexString(tokenAddress)
-    );
-    FellowshipTemplateV2.create(fellowshipAddress);
-    fellowship.totalSupply = BigInt.fromI32(0);
-    fellowship.raisedAmount = BigInt.fromI32(0);
-    fellowship.contributionAmount = BigInt.fromI32(0);
-    fellowship.endorsementAmount = BigInt.fromI32(0);
+  let FilterList = ["0x56a94e5ed292bc91c5eff5b9db38ec0d54c66f40"];
 
-    fellowship.address = fellowshipAddress;
-    let artisan = User.load(event.params.to);
+  let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
+  if (FilterList.includes(tokenAddress)) {
 
-    if (!artisan) {
-      artisan = new User(event.params.to);
-      artisan.holyShitsBalance = BigInt.fromU32(0);
-      artisan.save();
-    }
-
-    fellowship.artisan = artisan.id;
-
-    fellowship.save();
   } else {
-    let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
-    let fellowship = Fellowship.load(Bytes.fromHexString(tokenAddress));
-    if (fellowship) {
-      fellowship.artisan = getUser(event.params.to).id;
+    if (event.params.from == AddressZero) {
+      let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
+      let fellowship = new Fellowship(Bytes.fromHexString(tokenAddress));
+      fellowship.version = BigInt.fromI32(2);
+      let fellowshipAddress = Address.fromBytes(
+        Bytes.fromHexString(tokenAddress)
+      );
+      FellowshipTemplateV2.create(fellowshipAddress);
+      fellowship.totalSupply = BigInt.fromI32(0);
+      fellowship.raisedAmount = BigInt.fromI32(0);
+      fellowship.contributionAmount = BigInt.fromI32(0);
+      fellowship.endorsementAmount = BigInt.fromI32(0);
+
+      fellowship.address = fellowshipAddress;
+      let artisan = User.load(event.params.to);
+
+      if (!artisan) {
+        artisan = new User(event.params.to);
+        artisan.holyShitsBalance = BigInt.fromU32(0);
+        artisan.save();
+      }
+
+      fellowship.artisan = artisan.id;
+
       fellowship.save();
+    } else {
+      let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
+      let fellowship = Fellowship.load(Bytes.fromHexString(tokenAddress));
+      if (fellowship) {
+        fellowship.artisan = getUser(event.params.to).id;
+        fellowship.save();
+      }
     }
   }
 }
