@@ -23,7 +23,7 @@ import {
   Upgraded,
 } from "../generated/ArtisanAlly/ArtisanAlly";
 import { User, Fellowship, Deity, Slot } from "../generated/schema";
-import { FellowshipTemplate } from "../generated/templates";
+import { FellowshipTemplateV2  } from "../generated/templates";
 import { getUser } from "./utils";
 
 const AddressZero = Address.fromString(
@@ -298,11 +298,11 @@ export function handleTransfer(event: Transfer): void {
   if (event.params.from == AddressZero) {
     let tokenAddress = event.params.tokenId.toHex().slice(0, 42);
     let fellowship = new Fellowship(Bytes.fromHexString(tokenAddress));
-    fellowship.version = BigInt.fromI32(1);
+    fellowship.version = BigInt.fromI32(2);
     let fellowshipAddress = Address.fromBytes(
       Bytes.fromHexString(tokenAddress)
     );
-    FellowshipTemplate.create(fellowshipAddress);
+    FellowshipTemplateV2.create(fellowshipAddress);
     fellowship.totalSupply = BigInt.fromI32(0);
     fellowship.raisedAmount = BigInt.fromI32(0);
     fellowship.contributionAmount = BigInt.fromI32(0);

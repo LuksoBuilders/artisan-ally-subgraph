@@ -209,6 +209,102 @@ export class GlobalVars extends Entity {
   }
 }
 
+export class FellowshipPrices extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save FellowshipPrices entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type FellowshipPrices must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("FellowshipPrices", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): FellowshipPrices | null {
+    return changetype<FellowshipPrices | null>(
+      store.get_in_block("FellowshipPrices", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): FellowshipPrices | null {
+    return changetype<FellowshipPrices | null>(
+      store.get("FellowshipPrices", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get initialPrice(): BigInt {
+    let value = this.get("initialPrice");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set initialPrice(value: BigInt) {
+    this.set("initialPrice", Value.fromBigInt(value));
+  }
+
+  get initialGrowthFactor(): BigInt {
+    let value = this.get("initialGrowthFactor");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set initialGrowthFactor(value: BigInt) {
+    this.set("initialGrowthFactor", Value.fromBigInt(value));
+  }
+
+  get eventualGrowthFactor(): BigInt {
+    let value = this.get("eventualGrowthFactor");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set eventualGrowthFactor(value: BigInt) {
+    this.set("eventualGrowthFactor", Value.fromBigInt(value));
+  }
+
+  get diminishingFactor(): BigInt {
+    let value = this.get("diminishingFactor");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set diminishingFactor(value: BigInt) {
+    this.set("diminishingFactor", Value.fromBigInt(value));
+  }
+}
+
 export class Fellowship extends Entity {
   constructor(id: Bytes) {
     super();
@@ -515,6 +611,36 @@ export class Fellowship extends Entity {
 
   set raisedAmount(value: BigInt) {
     this.set("raisedAmount", Value.fromBigInt(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
+  }
+
+  get prices(): Bytes | null {
+    let value = this.get("prices");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set prices(value: Bytes | null) {
+    if (!value) {
+      this.unset("prices");
+    } else {
+      this.set("prices", Value.fromBytes(<Bytes>value));
+    }
   }
 }
 

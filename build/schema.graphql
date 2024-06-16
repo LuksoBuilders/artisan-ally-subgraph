@@ -16,6 +16,14 @@ type GlobalVars @entity {
   divineDungDepotBalance: BigInt!
 }
 
+type FellowshipPrices @entity {
+  id: Bytes!
+  initialPrice: BigInt!
+  initialGrowthFactor: BigInt!
+  eventualGrowthFactor: BigInt!
+  diminishingFactor: BigInt!
+}
+
 type Fellowship @entity {
   id: Bytes!
   address: Bytes!
@@ -36,6 +44,8 @@ type Fellowship @entity {
   founder: Deity
   artisan: User
   raisedAmount: BigInt!
+  version: BigInt!
+  prices: FellowshipPrices
 }
 
 type SystemFeeAtomCollected @entity {

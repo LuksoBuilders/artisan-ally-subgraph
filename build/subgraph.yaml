@@ -156,6 +156,41 @@ dataSources:
         - event: Transfer(address,indexed address,indexed address,indexed bytes32,bool,bytes)
           handler: handleTransfer
       file: ArtisanAlly/ArtisanAlly.wasm
+  - kind: ethereum
+    name: ArtisanAllyV2
+    network: mainnet
+    source:
+      address: "0x050cbFFFAE8541A2154B40d4dD13F2d1F1a704F1"
+      abi: ArtisanAllyV2
+      startBlock: 2508737
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Fellowship
+        - Deity
+        - Slot
+      abis:
+        - name: ArtisanAllyV2
+          file: ArtisanAllyV2/abis/ArtisanAllyV2.json
+      eventHandlers:
+        - event: BackerBuckPricesChange(uint256,uint256)
+          handler: handleBackerBuckPricesChange
+        - event: FellowshipFounded(indexed address,indexed uint256,indexed address,uint256,uint256)
+          handler: handleFellowshipFounded
+        - event: Initialized(uint64)
+          handler: handleInitialized
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SystemFeeShareChange(uint256)
+          handler: handleSystemFeeShareChange
+        - event: TokenIdDataChanged(indexed bytes32,indexed bytes32,bytes)
+          handler: handleTokenIdDataChanged
+        - event: Transfer(address,indexed address,indexed address,indexed bytes32,bool,bytes)
+          handler: handleTransfer
+      file: ArtisanAllyV2/ArtisanAllyV2.wasm
 templates:
   - name: FellowshipTemplate
     kind: ethereum/contract
@@ -178,6 +213,35 @@ templates:
       eventHandlers:
         - event: SettedUp(uint256,uint256)
           handler: handleSettedUp
+        - event: SubIntialization(address,address)
+          handler: handleSubInitialized
+        - event: BackerBuckMinted(uint256,uint256,uint256,address)
+          handler: handleBackerBuckMinted
+        - event: DataChanged(indexed bytes32,bytes)
+          handler: handleDataChangedForFellowship
+        - event: Transfer(indexed address,indexed address,indexed address,uint256,bool,bytes)
+          handler: handleTransfer
+  - name: FellowshipTemplateV2
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: FellowshipV2
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/FellowshipTemplateV2/FellowshipTemplateV2.wasm
+      entities:
+        - Fellowship
+        - User
+        - Contribution
+        - Endorsement
+      abis:
+        - name: FellowshipV2
+          file: FellowshipTemplateV2/abis/FellowshipV2.json
+      eventHandlers:
+        - event: PricesSettedUp(uint256,uint256,uint256,uint256)
+          handler: handlePriceSettedUp
         - event: SubIntialization(address,address)
           handler: handleSubInitialized
         - event: BackerBuckMinted(uint256,uint256,uint256,address)

@@ -20,6 +20,20 @@ export class FellowshipTemplate extends DataSourceTemplate {
   }
 }
 
+export class FellowshipTemplateV2 extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("FellowshipTemplateV2", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext(
+      "FellowshipTemplateV2",
+      [address.toHex()],
+      context
+    );
+  }
+}
+
 export class ContributionTemplate extends DataSourceTemplate {
   static create(address: Address): void {
     DataSourceTemplate.create("ContributionTemplate", [address.toHex()]);
