@@ -314,6 +314,7 @@ export function handleTransfer(event: Transfer): void {
     if (!artisan) {
       artisan = new User(event.params.to);
       artisan.holyShitsBalance = BigInt.fromU32(0);
+      artisan.steloBalance = BigInt.fromU32(0);
       artisan.save();
     }
 

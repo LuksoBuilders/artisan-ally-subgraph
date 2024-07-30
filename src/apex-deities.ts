@@ -111,6 +111,7 @@ export function handleTransfer(event: TransferEvent): void {
     if (!owner) {
       owner = new User(event.params.to);
       owner.holyShitsBalance = BigInt.fromU32(0);
+      owner.steloBalance = BigInt.fromU32(0);
       owner.save();
     }
 
@@ -147,6 +148,7 @@ export function handleTransfer(event: TransferEvent): void {
       if (!owner) {
         owner = new User(event.params.to);
         owner.holyShitsBalance = BigInt.fromU32(0);
+        owner.steloBalance = BigInt.fromU32(0);
         owner.save();
       }
       deity.owner = owner.id;

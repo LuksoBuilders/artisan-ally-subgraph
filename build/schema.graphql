@@ -1,3 +1,9 @@
+type BotBid @entity {
+  id: Bytes!
+  amount: BigInt!
+  maxPrice: BigInt!
+}
+
 type User @entity {
   id: Bytes!
   fellowships: [Fellowship!]! @derivedFrom(field: "artisan")
@@ -7,6 +13,8 @@ type User @entity {
   endorsements: [Endorsement!]! @derivedFrom(field: "endorser")
   endorseds: [Endorsement!]! @derivedFrom(field: "from")
   holyShitsBalance: BigInt!
+  steloBalance: BigInt!
+  bid: BotBid
 }
 
 type GlobalVars @entity {

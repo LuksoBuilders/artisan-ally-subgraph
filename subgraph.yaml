@@ -3,6 +3,54 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: Stelo
+    network: mainnet
+    source:
+      address: "0x4bed66ba55006f81dbc53c094a0ec09f5fd1ff2f"
+      abi: Stelo
+      startBlock: 2965756
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - User
+      abis:
+        - name: Stelo
+          file: ./abis/Stelo.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed address,uint256,bool,bytes)
+          handler: handleTransfer
+        - event: AuctionEnded(indexed uint256,address,uint256)
+          handler: handleAuctionEnded
+      file: ./src/stelo.ts
+  - kind: ethereum
+    name: SteloAuctionBot
+    network: mainnet
+    source:
+      address: "0xB957A0eA94A23f05f54fe740719691e1887b844F"
+      abi: SteloAuctionBot
+      startBlock: 3018480
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - User
+      abis:
+        - name: SteloAuctionBot
+          file: ./abis/SteloAuctionBot.json
+      eventHandlers:
+        - event: AuctionParticipated(indexed address,uint256)
+          handler: handleAuctionParticipated
+        - event: FundsDeposited(indexed address,uint256,uint256)
+          handler: handleFundsDeposited
+        - event: FundsWithdrawn(indexed address,uint256)
+          handler: handleFundsWithdrawn
+        - event: MaxPriceUpdated(indexed address,uint256)
+          handler: handleMaxPriceUpdated
+      file: ./src/stelo-auction-bot.ts
+  - kind: ethereum
     name: ApexDeities
     network: mainnet
     source:

@@ -19,6 +19,7 @@ export function getUser(userAddress: Address): User {
   if (!user) {
     user = new User(userAddress);
     user.holyShitsBalance = BigInt.fromU32(0);
+    user.steloBalance = BigInt.fromU32(0);
     user.save();
   }
   return user;
