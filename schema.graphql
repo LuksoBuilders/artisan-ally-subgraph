@@ -4,6 +4,46 @@ type BotBid @entity {
   maxPrice: BigInt!
 }
 
+type Feed @entity {
+  id: Bytes!
+  owner: User! @derivedFrom(field: "feed")
+  posts: [Post!]! @derivedFrom(field: "feed")
+  postCount: BigInt!
+  followers: [User!]!
+  followerCount: BigInt!
+}
+
+type Post @entity {
+  id: ID!
+  feed: Feed!
+  postType: String!
+  creator: User!
+  referenceFeed: Bytes
+  referencePost: Post
+  isDeleted: Boolean!
+  isStarred: Boolean!
+  createdAt: BigInt!
+  content: Bytes
+  replies: [Post!]! @derivedFrom(field: "referencePost")
+  mirrors: [Post!]! @derivedFrom(field: "referencePost")
+  tips: [Tip!]! @derivedFrom(field: "post")
+}
+
+type Tip @entity {
+  id: Bytes!
+  tipper: User!
+  feed: Feed!
+  post: Post!
+  amount: BigInt!
+}
+
+type Star @entity {
+  id: Bytes!
+  user: User!
+  feed: Feed!
+  post: Post!
+}
+
 type User @entity {
   id: Bytes!
   fellowships: [Fellowship!]! @derivedFrom(field: "artisan")
@@ -15,6 +55,8 @@ type User @entity {
   holyShitsBalance: BigInt!
   steloBalance: BigInt!
   bid: BotBid
+  feed: Feed
+  followedFeeds: [Feed!]! @derivedFrom(field: "followers")
 }
 
 type GlobalVars @entity {

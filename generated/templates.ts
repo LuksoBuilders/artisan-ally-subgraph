@@ -61,3 +61,17 @@ export class EndorsementTemplate extends DataSourceTemplate {
     );
   }
 }
+
+export class FeedLogic extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("FeedLogic", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext(
+      "FeedLogic",
+      [address.toHex()],
+      context
+    );
+  }
+}

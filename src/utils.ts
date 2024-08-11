@@ -104,3 +104,13 @@ export function createSlot(
   slot.usedAt = BigInt.fromI32(0);
   slot.save();
 }
+
+export function generateUniquePostId(
+  feedAddress: Bytes,
+  postId: Bytes
+): string {
+  return feedAddress
+    .toHexString()
+    .concat("-")
+    .concat(postId.toHexString());
+}

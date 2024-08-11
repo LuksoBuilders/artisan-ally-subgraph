@@ -79,6 +79,461 @@ export class BotBid extends Entity {
   }
 }
 
+export class Feed extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Feed entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Feed must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Feed", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): Feed | null {
+    return changetype<Feed | null>(
+      store.get_in_block("Feed", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): Feed | null {
+    return changetype<Feed | null>(store.get("Feed", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get owner(): UserLoader {
+    return new UserLoader(
+      "Feed",
+      this.get("id")!
+        .toBytes()
+        .toHexString(),
+      "owner"
+    );
+  }
+
+  get posts(): PostLoader {
+    return new PostLoader("Feed", this.get("id")!.toString(), "posts");
+  }
+
+  get postCount(): BigInt {
+    let value = this.get("postCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set postCount(value: BigInt) {
+    this.set("postCount", Value.fromBigInt(value));
+  }
+
+  get followers(): Array<Bytes> {
+    let value = this.get("followers");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytesArray();
+    }
+  }
+
+  set followers(value: Array<Bytes>) {
+    this.set("followers", Value.fromBytesArray(value));
+  }
+
+  get followerCount(): BigInt {
+    let value = this.get("followerCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set followerCount(value: BigInt) {
+    this.set("followerCount", Value.fromBigInt(value));
+  }
+}
+
+export class Post extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Post entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Post must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Post", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Post | null {
+    return changetype<Post | null>(store.get_in_block("Post", id));
+  }
+
+  static load(id: string): Post | null {
+    return changetype<Post | null>(store.get("Post", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get feed(): Bytes {
+    let value = this.get("feed");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set feed(value: Bytes) {
+    this.set("feed", Value.fromBytes(value));
+  }
+
+  get postType(): string {
+    let value = this.get("postType");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set postType(value: string) {
+    this.set("postType", Value.fromString(value));
+  }
+
+  get creator(): Bytes {
+    let value = this.get("creator");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set creator(value: Bytes) {
+    this.set("creator", Value.fromBytes(value));
+  }
+
+  get referenceFeed(): Bytes | null {
+    let value = this.get("referenceFeed");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set referenceFeed(value: Bytes | null) {
+    if (!value) {
+      this.unset("referenceFeed");
+    } else {
+      this.set("referenceFeed", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get referencePost(): string | null {
+    let value = this.get("referencePost");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set referencePost(value: string | null) {
+    if (!value) {
+      this.unset("referencePost");
+    } else {
+      this.set("referencePost", Value.fromString(<string>value));
+    }
+  }
+
+  get isDeleted(): boolean {
+    let value = this.get("isDeleted");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set isDeleted(value: boolean) {
+    this.set("isDeleted", Value.fromBoolean(value));
+  }
+
+  get isStarred(): boolean {
+    let value = this.get("isStarred");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set isStarred(value: boolean) {
+    this.set("isStarred", Value.fromBoolean(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
+  get content(): Bytes | null {
+    let value = this.get("content");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set content(value: Bytes | null) {
+    if (!value) {
+      this.unset("content");
+    } else {
+      this.set("content", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get replies(): PostLoader {
+    return new PostLoader("Post", this.get("id")!.toString(), "replies");
+  }
+
+  get mirrors(): PostLoader {
+    return new PostLoader("Post", this.get("id")!.toString(), "mirrors");
+  }
+
+  get tips(): TipLoader {
+    return new TipLoader(
+      "Post",
+      this.get("id")!
+        .toBytes()
+        .toHexString(),
+      "tips"
+    );
+  }
+}
+
+export class Tip extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Tip entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Tip must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Tip", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): Tip | null {
+    return changetype<Tip | null>(store.get_in_block("Tip", id.toHexString()));
+  }
+
+  static load(id: Bytes): Tip | null {
+    return changetype<Tip | null>(store.get("Tip", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get tipper(): Bytes {
+    let value = this.get("tipper");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set tipper(value: Bytes) {
+    this.set("tipper", Value.fromBytes(value));
+  }
+
+  get feed(): Bytes {
+    let value = this.get("feed");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set feed(value: Bytes) {
+    this.set("feed", Value.fromBytes(value));
+  }
+
+  get post(): string {
+    let value = this.get("post");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set post(value: string) {
+    this.set("post", Value.fromString(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+}
+
+export class Star extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Star entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Star must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Star", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): Star | null {
+    return changetype<Star | null>(
+      store.get_in_block("Star", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): Star | null {
+    return changetype<Star | null>(store.get("Star", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get user(): Bytes {
+    let value = this.get("user");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set user(value: Bytes) {
+    this.set("user", Value.fromBytes(value));
+  }
+
+  get feed(): Bytes {
+    let value = this.get("feed");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set feed(value: Bytes) {
+    this.set("feed", Value.fromBytes(value));
+  }
+
+  get post(): string {
+    let value = this.get("post");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set post(value: string) {
+    this.set("post", Value.fromString(value));
+  }
+}
+
 export class User extends Entity {
   constructor(id: Bytes) {
     super();
@@ -221,6 +676,33 @@ export class User extends Entity {
     } else {
       this.set("bid", Value.fromBytes(<Bytes>value));
     }
+  }
+
+  get feed(): Bytes | null {
+    let value = this.get("feed");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set feed(value: Bytes | null) {
+    if (!value) {
+      this.unset("feed");
+    } else {
+      this.set("feed", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get followedFeeds(): FeedLoader {
+    return new FeedLoader(
+      "User",
+      this.get("id")!
+        .toBytes()
+        .toHexString(),
+      "followedFeeds"
+    );
   }
 }
 
@@ -1437,6 +1919,60 @@ export class Slot extends Entity {
   }
 }
 
+export class UserLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): User[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<User[]>(value);
+  }
+}
+
+export class PostLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Post[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Post[]>(value);
+  }
+}
+
+export class TipLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Tip[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Tip[]>(value);
+  }
+}
+
 export class FellowshipLoader extends Entity {
   _entity: string;
   _field: string;
@@ -1524,6 +2060,24 @@ export class EndorsementLoader extends Entity {
   load(): Endorsement[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
     return changetype<Endorsement[]>(value);
+  }
+}
+
+export class FeedLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Feed[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Feed[]>(value);
   }
 }
 

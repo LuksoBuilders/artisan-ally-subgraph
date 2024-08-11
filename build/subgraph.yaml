@@ -30,7 +30,7 @@ dataSources:
     source:
       address: "0xB957A0eA94A23f05f54fe740719691e1887b844F"
       abi: SteloAuctionBot
-      startBlock: 3011978
+      startBlock: 3018480
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -50,6 +50,27 @@ dataSources:
         - event: MaxPriceUpdated(indexed address,uint256)
           handler: handleMaxPriceUpdated
       file: SteloAuctionBot/SteloAuctionBot.wasm
+  - kind: ethereum
+    name: FeedRegistry
+    network: mainnet
+    source:
+      address: "0xBd961d66e92bF3C5FE60Fd5e632339b0Fb004f8B"
+      abi: FeedRegistry
+      startBlock: 3109926
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Feed
+        - User
+      abis:
+        - name: FeedRegistry
+          file: FeedRegistry/abis/FeedRegistry.json
+      eventHandlers:
+        - event: FeedCreated(indexed address,indexed address)
+          handler: handleFeedCreated
+      file: FeedRegistry/FeedRegistry.wasm
   - kind: ethereum
     name: ApexDeities
     network: mainnet
@@ -350,3 +371,35 @@ templates:
           handler: handleDataChanged
         - event: Transfer(indexed address,indexed address,indexed address,uint256,bool,bytes)
           handler: handleTransfer
+  - name: FeedLogic
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: FeedLogic
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/FeedLogic/FeedLogic.wasm
+      entities:
+        - Feed
+        - Post
+        - User
+      abis:
+        - name: FeedLogic
+          file: FeedLogic/abis/FeedLogic.json
+      eventHandlers:
+        - event: PostCreated(indexed bytes32,uint8,bytes,indexed address)
+          handler: handlePostCreated
+        - event: ReplyCreated(indexed bytes32,indexed bytes32,indexed address,bytes,address)
+          handler: handleReplyCreated
+        - event: MirrorCreated(indexed bytes32,indexed bytes32,indexed address,bytes,address)
+          handler: handleMirrorCreated
+        - event: PostDeleted(indexed bytes32,indexed address)
+          handler: handlePostDeleted
+        - event: Followed(indexed address)
+          handler: handleFollowed
+        - event: Unfollowed(indexed address)
+          handler: handleUnfollowed
+        - event: TokenIdDataChanged(indexed bytes32,indexed bytes32,bytes)
+          handler: handleTokenIdDataChanged
