@@ -15,6 +15,7 @@ export function handleFeedCreated(event: FeedCreated): void {
 
   user.feed = feed.id;
   user.save();
+  feed.owner = user.id;
   feed.save();
 
   // Create a new FeedLogic data source

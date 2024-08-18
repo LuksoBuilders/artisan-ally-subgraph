@@ -7,7 +7,7 @@ import {
   Followed,
   Unfollowed,
 } from "../generated/templates/FeedLogic/FeedLogic";
-import { Feed, Post, User } from "../generated/schema";
+import { Feed, Post, Alert } from "../generated/schema";
 import { getUser, generateUniquePostId } from "./utils";
 
 export function handlePostCreated(event: PostCreated): void {
@@ -21,9 +21,14 @@ export function handlePostCreated(event: PostCreated): void {
   post.postType = "Normal";
   post.content = event.params.content;
   post.creator = event.params.creator;
+  post.parents = [];
   post.isDeleted = false;
   post.isStarred = false;
   post.createdAt = event.block.timestamp;
+
+  post.repliesCount = BigInt.fromI32(0);
+  post.mirrorsCount = BigInt.fromI32(0);
+
   post.save();
 
   feed.postCount = feed.postCount.plus(BigInt.fromI32(1));
@@ -46,6 +51,33 @@ export function handleReplyCreated(event: ReplyCreated): void {
     event.params.replyToFeed,
     event.params.replyToPostId
   );
+
+  let parentPost = Post.load(
+    generateUniquePostId(event.params.replyToFeed, event.params.replyToPostId)
+  );
+
+  if (parentPost) {
+    post.parents = parentPost.parents.concat([parentPost.id]);
+    parentPost.repliesCount = parentPost.repliesCount.plus(BigInt.fromI32(1));
+    parentPost.save();
+
+    // Create an alert for the parent post creator
+    let alert = new Alert(
+      event.transaction.hash.concatI32(event.logIndex.toI32())
+    );
+    alert.type = "reply";
+
+    alert.recipient = parentPost.creator;
+    alert.payload = [event.params.creator.toHexString(), post.id];
+    alert.createdAt = event.block.timestamp.toString();
+    alert.save();
+  } else {
+    post.parents = [];
+  }
+
+  post.repliesCount = BigInt.fromI32(0);
+  post.mirrorsCount = BigInt.fromI32(0);
+
   post.isDeleted = false;
   post.isStarred = false;
   post.createdAt = event.block.timestamp;
@@ -81,9 +113,24 @@ export function handleMirrorCreated(event: MirrorCreated): void {
 }
 
 export function handlePostDeleted(event: PostDeleted): void {
-  let post = Post.load(generateUniquePostId(event.address, event.params.postId));
+  let post = Post.load(
+    generateUniquePostId(event.address, event.params.postId)
+  );
   if (post == null) {
     return;
+  }
+
+  if (post.referencePost) {
+    let parentPostId = post.referencePost as string;
+    let parentPost = Post.load(parentPostId);
+    if (parentPost) {
+      if (post.postType == "Reply") {
+        parentPost.repliesCount = parentPost.repliesCount.minus(
+          BigInt.fromI32(1)
+        );
+        parentPost.save();
+      }
+    }
   }
 
   post.isDeleted = true;
@@ -110,6 +157,18 @@ export function handleFollowed(event: Followed): void {
     feed.followers = newFollowers;
     feed.followerCount = feed.followerCount.plus(BigInt.fromI32(1));
     feed.save();
+
+    // Create an alert for the feed owner
+    let alert = new Alert(
+      event.transaction.hash.concatI32(event.logIndex.toI32())
+    );
+
+    alert.type = "follow";
+
+    alert.recipient = feed.owner;
+    alert.payload = [follower.id.toHexString()];
+    alert.createdAt = event.block.timestamp.toString();
+    alert.save();
   }
 }
 

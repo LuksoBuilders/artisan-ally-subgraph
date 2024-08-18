@@ -6,7 +6,7 @@ type BotBid @entity {
 
 type Feed @entity {
   id: Bytes!
-  owner: User! @derivedFrom(field: "feed")
+  owner: User!
   posts: [Post!]! @derivedFrom(field: "feed")
   postCount: BigInt!
   followers: [User!]!
@@ -24,8 +24,11 @@ type Post @entity {
   isStarred: Boolean!
   createdAt: BigInt!
   content: Bytes
+  parents: [Post!]!
   replies: [Post!]! @derivedFrom(field: "referencePost")
+  repliesCount: BigInt!
   mirrors: [Post!]! @derivedFrom(field: "referencePost")
+  mirrorsCount: BigInt!
   tips: [Tip!]! @derivedFrom(field: "post")
 }
 
@@ -154,4 +157,12 @@ type Slot @entity {
   deity: Deity!
   index: BigInt!
   usedAt: BigInt!
+}
+
+type Alert @entity {
+  id: Bytes!
+  type: String!
+  recipient: User!
+  payload: [String!]!
+  createdAt: String!
 }

@@ -120,14 +120,17 @@ export class Feed extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get owner(): UserLoader {
-    return new UserLoader(
-      "Feed",
-      this.get("id")!
-        .toBytes()
-        .toHexString(),
-      "owner"
-    );
+  get owner(): Bytes {
+    let value = this.get("owner");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
   }
 
   get posts(): PostLoader {
@@ -342,12 +345,51 @@ export class Post extends Entity {
     }
   }
 
+  get parents(): Array<string> {
+    let value = this.get("parents");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set parents(value: Array<string>) {
+    this.set("parents", Value.fromStringArray(value));
+  }
+
   get replies(): PostLoader {
     return new PostLoader("Post", this.get("id")!.toString(), "replies");
   }
 
+  get repliesCount(): BigInt {
+    let value = this.get("repliesCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set repliesCount(value: BigInt) {
+    this.set("repliesCount", Value.fromBigInt(value));
+  }
+
   get mirrors(): PostLoader {
     return new PostLoader("Post", this.get("id")!.toString(), "mirrors");
+  }
+
+  get mirrorsCount(): BigInt {
+    let value = this.get("mirrorsCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set mirrorsCount(value: BigInt) {
+    this.set("mirrorsCount", Value.fromBigInt(value));
   }
 
   get tips(): TipLoader {
@@ -1919,21 +1961,97 @@ export class Slot extends Entity {
   }
 }
 
-export class UserLoader extends Entity {
-  _entity: string;
-  _field: string;
-  _id: string;
-
-  constructor(entity: string, id: string, field: string) {
+export class Alert extends Entity {
+  constructor(id: Bytes) {
     super();
-    this._entity = entity;
-    this._id = id;
-    this._field = field;
+    this.set("id", Value.fromBytes(id));
   }
 
-  load(): User[] {
-    let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<User[]>(value);
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Alert entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Alert must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Alert", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static loadInBlock(id: Bytes): Alert | null {
+    return changetype<Alert | null>(
+      store.get_in_block("Alert", id.toHexString())
+    );
+  }
+
+  static load(id: Bytes): Alert | null {
+    return changetype<Alert | null>(store.get("Alert", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get type(): string {
+    let value = this.get("type");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set type(value: string) {
+    this.set("type", Value.fromString(value));
+  }
+
+  get recipient(): Bytes {
+    let value = this.get("recipient");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set recipient(value: Bytes) {
+    this.set("recipient", Value.fromBytes(value));
+  }
+
+  get payload(): Array<string> {
+    let value = this.get("payload");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set payload(value: Array<string>) {
+    this.set("payload", Value.fromStringArray(value));
+  }
+
+  get createdAt(): string {
+    let value = this.get("createdAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set createdAt(value: string) {
+    this.set("createdAt", Value.fromString(value));
   }
 }
 
