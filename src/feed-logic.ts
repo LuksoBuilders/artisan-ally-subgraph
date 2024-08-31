@@ -144,48 +144,48 @@ export function handlePostDeleted(event: PostDeleted): void {
 }
 
 export function handleFollowed(event: Followed): void {
-  let feed = Feed.load(event.address);
-  if (feed == null) {
-    return;
-  }
-
-  let follower = getUser(event.params.follower);
-
-  if (!feed.followers.includes(follower.id)) {
-    let newFollowers = feed.followers;
-    newFollowers.push(follower.id);
-    feed.followers = newFollowers;
-    feed.followerCount = feed.followerCount.plus(BigInt.fromI32(1));
-    feed.save();
-
-    // Create an alert for the feed owner
-    let alert = new Alert(
-      event.transaction.hash.concatI32(event.logIndex.toI32())
-    );
-
-    alert.type = "follow";
-
-    alert.recipient = feed.owner;
-    alert.payload = [follower.id.toHexString()];
-    alert.createdAt = event.block.timestamp.toString();
-    alert.save();
-  }
+  //let feed = Feed.load(event.address);
+  //if (feed == null) {
+  //  return;
+  //}
+  //
+  //let follower = getUser(event.params.follower);
+  //
+  //if (!feed.followers.includes(follower.id)) {
+  //  let newFollowers = feed.followers;
+  //  newFollowers.push(follower.id);
+  //  feed.followers = newFollowers;
+  //  feed.followerCount = feed.followerCount.plus(BigInt.fromI32(1));
+  //  feed.save();
+  //
+  //  // Create an alert for the feed owner
+  //  let alert = new Alert(
+  //    event.transaction.hash.concatI32(event.logIndex.toI32())
+  //  );
+  //
+  //  alert.type = "follow";
+  //
+  //  alert.recipient = feed.owner;
+  //  alert.payload = [follower.id.toHexString()];
+  //  alert.createdAt = event.block.timestamp.toString();
+  //  alert.save();
+  //}
 }
 
 export function handleUnfollowed(event: Unfollowed): void {
-  let feed = Feed.load(event.address);
-  if (feed == null) {
-    return;
-  }
-
-  let unfollower = getUser(event.params.follower);
-
-  let index = feed.followers.indexOf(unfollower.id);
-  if (index > -1) {
-    let newFollowers = feed.followers;
-    newFollowers.splice(index, 1);
-    feed.followers = newFollowers;
-    feed.followerCount = feed.followerCount.minus(BigInt.fromI32(1));
-    feed.save();
-  }
+  //let feed = Feed.load(event.address);
+  //if (feed == null) {
+  //  return;
+  //}
+  //
+  //let unfollower = getUser(event.params.follower);
+  //
+  //let index = feed.followers.indexOf(unfollower.id);
+  //if (index > -1) {
+  //  let newFollowers = feed.followers;
+  //  newFollowers.splice(index, 1);
+  //  feed.followers = newFollowers;
+  //  feed.followerCount = feed.followerCount.minus(BigInt.fromI32(1));
+  //  feed.save();
+  //}
 }

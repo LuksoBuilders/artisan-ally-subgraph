@@ -315,6 +315,11 @@ export function handleTransfer(event: Transfer): void {
       artisan = new User(event.params.to);
       artisan.holyShitsBalance = BigInt.fromU32(0);
       artisan.steloBalance = BigInt.fromU32(0);
+      artisan.followers = [];
+      artisan.followerCount = BigInt.fromU32(0);
+      artisan.followings = [];
+      artisan.followingCount = BigInt.fromU32(0);
+
       artisan.save();
     }
 

@@ -3,6 +3,29 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: FollowRegistry
+    network: mainnet
+    source:
+      address: "0xf01103E5a9909Fc0DBe8166dA7085e0285daDDcA"
+      abi: FollowRegistry
+      startBlock: 3179471
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Alert
+      abis:
+        - name: FollowRegistry
+          file: ./abis/FollowRegistry.json
+      eventHandlers:
+        - event: Follow(address,address)
+          handler: handleFollow
+        - event: Unfollow(address,address)
+          handler: handleUnfollow
+      file: ./src/follow-registry.ts
+  - kind: ethereum
     name: Stelo
     network: mainnet
     source:
@@ -71,6 +94,28 @@ dataSources:
         - event: FeedCreated(indexed address,indexed address)
           handler: handleFeedCreated
       file: ./src/feed-registry.ts
+  - kind: ethereum/contract
+    name: StarPublications
+    network: mainnet
+    source:
+      address: "0x0E8bD33a77a1494764c74972709F8AB7E93Ec99E" # Replace with actual contract address
+      abi: StarPublications
+      startBlock: 1234567 # Replace with the block number where the contract was deployed
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Post
+        - Alert
+      abis:
+        - name: StarPublications
+          file: ./abis/StarPublications.json
+      eventHandlers:
+        - event: PublicationStarred(indexed address,indexed address,indexed bytes32)
+          handler: handlePublicationStarred
+      file: ./src/star-publications.ts
+
   - kind: ethereum
     name: ApexDeities
     network: mainnet

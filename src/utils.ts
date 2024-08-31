@@ -20,6 +20,11 @@ export function getUser(userAddress: Address): User {
     user = new User(userAddress);
     user.holyShitsBalance = BigInt.fromU32(0);
     user.steloBalance = BigInt.fromU32(0);
+    user.followers = [];
+    user.followerCount = BigInt.fromU32(0);
+    user.followings = [];
+    user.followingCount = BigInt.fromU32(0);
+
     user.save();
   }
   return user;

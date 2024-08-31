@@ -149,32 +149,6 @@ export class Feed extends Entity {
   set postCount(value: BigInt) {
     this.set("postCount", Value.fromBigInt(value));
   }
-
-  get followers(): Array<Bytes> {
-    let value = this.get("followers");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytesArray();
-    }
-  }
-
-  set followers(value: Array<Bytes>) {
-    this.set("followers", Value.fromBytesArray(value));
-  }
-
-  get followerCount(): BigInt {
-    let value = this.get("followerCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set followerCount(value: BigInt) {
-    this.set("followerCount", Value.fromBigInt(value));
-  }
 }
 
 export class Post extends Entity {
@@ -737,14 +711,56 @@ export class User extends Entity {
     }
   }
 
-  get followedFeeds(): FeedLoader {
-    return new FeedLoader(
-      "User",
-      this.get("id")!
-        .toBytes()
-        .toHexString(),
-      "followedFeeds"
-    );
+  get followers(): Array<Bytes> {
+    let value = this.get("followers");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytesArray();
+    }
+  }
+
+  set followers(value: Array<Bytes>) {
+    this.set("followers", Value.fromBytesArray(value));
+  }
+
+  get followerCount(): BigInt {
+    let value = this.get("followerCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set followerCount(value: BigInt) {
+    this.set("followerCount", Value.fromBigInt(value));
+  }
+
+  get followings(): Array<Bytes> {
+    let value = this.get("followings");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytesArray();
+    }
+  }
+
+  set followings(value: Array<Bytes>) {
+    this.set("followings", Value.fromBytesArray(value));
+  }
+
+  get followingCount(): BigInt {
+    let value = this.get("followingCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set followingCount(value: BigInt) {
+    this.set("followingCount", Value.fromBigInt(value));
   }
 }
 
@@ -2178,24 +2194,6 @@ export class EndorsementLoader extends Entity {
   load(): Endorsement[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
     return changetype<Endorsement[]>(value);
-  }
-}
-
-export class FeedLoader extends Entity {
-  _entity: string;
-  _field: string;
-  _id: string;
-
-  constructor(entity: string, id: string, field: string) {
-    super();
-    this._entity = entity;
-    this._id = id;
-    this._field = field;
-  }
-
-  load(): Feed[] {
-    let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<Feed[]>(value);
   }
 }
 

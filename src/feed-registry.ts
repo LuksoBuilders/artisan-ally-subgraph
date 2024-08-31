@@ -10,8 +10,8 @@ export function handleFeedCreated(event: FeedCreated): void {
   let user = getUser(event.params.owner);
 
   feed.postCount = BigInt.fromI32(0);
-  feed.followerCount = BigInt.fromI32(0);
-  feed.followers = [];
+  //feed.followerCount = BigInt.fromI32(0);
+  //feed.followers = [];
 
   user.feed = feed.id;
   user.save();

@@ -9,8 +9,6 @@ type Feed @entity {
   owner: User!
   posts: [Post!]! @derivedFrom(field: "feed")
   postCount: BigInt!
-  followers: [User!]!
-  followerCount: BigInt!
 }
 
 type Post @entity {
@@ -59,7 +57,10 @@ type User @entity {
   steloBalance: BigInt!
   bid: BotBid
   feed: Feed
-  followedFeeds: [Feed!]! @derivedFrom(field: "followers")
+  followers: [User!]! 
+  followerCount: BigInt!
+  followings: [User!]!
+  followingCount: BigInt!
 }
 
 type GlobalVars @entity {
