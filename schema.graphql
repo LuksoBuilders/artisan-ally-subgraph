@@ -4,6 +4,19 @@ type BotBid @entity {
   maxPrice: BigInt!
 }
 
+type Event @entity {
+  id: ID!
+  eventType: String!
+  feed: Feed!
+  post: Post
+  creator: User!
+  referenceFeed: Bytes
+  referencePost: Post
+  content: Bytes
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type Feed @entity {
   id: Bytes!
   owner: User!
@@ -49,6 +62,7 @@ type User @entity {
   id: Bytes!
   fellowships: [Fellowship!]! @derivedFrom(field: "artisan")
   deities: [Deity!]! @derivedFrom(field: "owner")
+  whales: [Whale!]! @derivedFrom(field: "owner")
   backerBucks: [BackerBuck!]! @derivedFrom(field: "owner")
   contributions: [Contribution!]! @derivedFrom(field: "contributor")
   endorsements: [Endorsement!]! @derivedFrom(field: "endorser")
@@ -57,7 +71,7 @@ type User @entity {
   steloBalance: BigInt!
   bid: BotBid
   feed: Feed
-  followers: [User!]! 
+  followers: [User!]!
   followerCount: BigInt!
   followings: [User!]!
   followingCount: BigInt!
@@ -126,6 +140,11 @@ type Deity @entity {
   tier: String!
   slots: [Slot!]! @derivedFrom(field: "deity")
   portfolio: [Fellowship!]! @derivedFrom(field: "founder")
+}
+
+type Whale @entity {
+  id: Bytes!
+  owner: User!
 }
 
 type BackerBuck @entity {

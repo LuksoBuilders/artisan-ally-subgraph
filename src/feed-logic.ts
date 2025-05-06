@@ -7,7 +7,7 @@ import {
   Followed,
   Unfollowed,
 } from "../generated/templates/FeedLogic/FeedLogic";
-import { Feed, Post, Alert } from "../generated/schema";
+import { Feed, Post, Alert, Event } from "../generated/schema";
 import { getUser, generateUniquePostId } from "./utils";
 
 export function handlePostCreated(event: PostCreated): void {
@@ -16,7 +16,8 @@ export function handlePostCreated(event: PostCreated): void {
     return;
   }
 
-  let post = new Post(generateUniquePostId(event.address, event.params.postId));
+  let postId = generateUniquePostId(event.address, event.params.postId);
+  let post = new Post(postId);
   post.feed = feed.id;
   post.postType = "Normal";
   post.content = event.params.content;
@@ -31,6 +32,17 @@ export function handlePostCreated(event: PostCreated): void {
 
   post.save();
 
+  // Create Event entity
+  let eventEntity = new Event(event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString());
+  eventEntity.eventType = "PostCreated";
+  eventEntity.feed = feed.id;
+  eventEntity.post = postId;
+  eventEntity.creator = event.params.creator;
+  eventEntity.content = event.params.content;
+  eventEntity.timestamp = event.block.timestamp;
+  eventEntity.transactionHash = event.transaction.hash;
+  eventEntity.save();
+
   feed.postCount = feed.postCount.plus(BigInt.fromI32(1));
   feed.save();
 }
@@ -41,7 +53,8 @@ export function handleReplyCreated(event: ReplyCreated): void {
     return;
   }
 
-  let post = new Post(generateUniquePostId(event.address, event.params.postId));
+  let postId = generateUniquePostId(event.address, event.params.postId);
+  let post = new Post(postId);
   post.feed = feed.id;
   post.postType = "Reply";
   post.content = event.params.content;
@@ -66,7 +79,6 @@ export function handleReplyCreated(event: ReplyCreated): void {
       event.transaction.hash.concatI32(event.logIndex.toI32())
     );
     alert.type = "reply";
-
     alert.recipient = parentPost.creator;
     alert.payload = [event.params.creator.toHexString(), post.id];
     alert.createdAt = event.block.timestamp.toString();
@@ -77,11 +89,23 @@ export function handleReplyCreated(event: ReplyCreated): void {
 
   post.repliesCount = BigInt.fromI32(0);
   post.mirrorsCount = BigInt.fromI32(0);
-
   post.isDeleted = false;
   post.isStarred = false;
   post.createdAt = event.block.timestamp;
   post.save();
+
+  // Create Event entity
+  let eventEntity = new Event(event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString());
+  eventEntity.eventType = "ReplyCreated";
+  eventEntity.feed = feed.id;
+  eventEntity.post = postId;
+  eventEntity.creator = event.params.creator;
+  eventEntity.content = event.params.content;
+  eventEntity.referenceFeed = event.params.replyToFeed;
+  eventEntity.referencePost = generateUniquePostId(event.params.replyToFeed, event.params.replyToPostId);
+  eventEntity.timestamp = event.block.timestamp;
+  eventEntity.transactionHash = event.transaction.hash;
+  eventEntity.save();
 
   feed.postCount = feed.postCount.plus(BigInt.fromI32(1));
   feed.save();
@@ -93,7 +117,8 @@ export function handleMirrorCreated(event: MirrorCreated): void {
     return;
   }
 
-  let post = new Post(generateUniquePostId(event.address, event.params.postId));
+  let postId = generateUniquePostId(event.address, event.params.postId);
+  let post = new Post(postId);
   post.feed = feed.id;
   post.postType = "Mirror";
   post.content = event.params.content;
@@ -103,19 +128,47 @@ export function handleMirrorCreated(event: MirrorCreated): void {
     event.params.mirrorOfFeed,
     event.params.mirrorOfPostId
   );
+  
+  // Initialize the required parents field
+  let parentPost = Post.load(
+    generateUniquePostId(event.params.mirrorOfFeed, event.params.mirrorOfPostId)
+  );
+  
+  if (parentPost) {
+    post.parents = [parentPost.id];
+    parentPost.mirrorsCount = parentPost.mirrorsCount.plus(BigInt.fromI32(1));
+    parentPost.save();
+  } else {
+    post.parents = [];
+  }
+  
+  post.repliesCount = BigInt.fromI32(0);
+  post.mirrorsCount = BigInt.fromI32(0);
   post.isDeleted = false;
   post.isStarred = false;
   post.createdAt = event.block.timestamp;
   post.save();
+
+  // Create Event entity
+  let eventEntity = new Event(event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString());
+  eventEntity.eventType = "MirrorCreated";
+  eventEntity.feed = feed.id;
+  eventEntity.post = postId;
+  eventEntity.creator = event.params.creator;
+  eventEntity.content = event.params.content;
+  eventEntity.referenceFeed = event.params.mirrorOfFeed;
+  eventEntity.referencePost = generateUniquePostId(event.params.mirrorOfFeed, event.params.mirrorOfPostId);
+  eventEntity.timestamp = event.block.timestamp;
+  eventEntity.transactionHash = event.transaction.hash;
+  eventEntity.save();
 
   feed.postCount = feed.postCount.plus(BigInt.fromI32(1));
   feed.save();
 }
 
 export function handlePostDeleted(event: PostDeleted): void {
-  let post = Post.load(
-    generateUniquePostId(event.address, event.params.postId)
-  );
+  let postId = generateUniquePostId(event.address, event.params.postId);
+  let post = Post.load(postId);
   if (post == null) {
     return;
   }
@@ -138,6 +191,16 @@ export function handlePostDeleted(event: PostDeleted): void {
 
   let feed = Feed.load(post.feed);
   if (feed != null) {
+    // Create Event entity
+    let eventEntity = new Event(event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString());
+    eventEntity.eventType = "PostDeleted";
+    eventEntity.feed = feed.id;
+    eventEntity.post = postId;
+    eventEntity.creator = post.creator;
+    eventEntity.timestamp = event.block.timestamp;
+    eventEntity.transactionHash = event.transaction.hash;
+    eventEntity.save();
+
     feed.postCount = feed.postCount.minus(BigInt.fromI32(1));
     feed.save();
   }
