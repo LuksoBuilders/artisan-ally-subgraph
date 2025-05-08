@@ -1,5 +1,5 @@
 import { BigInt } from "@graphprotocol/graph-ts";
-import { Alert } from "../generated/schema";
+import { Alert, FollowEvent } from "../generated/schema";
 import { Follow, Unfollow } from "../generated/FollowRegistry/FollowRegistry";
 import { getUser, generateUniquePostId } from "./utils";
 
@@ -15,6 +15,7 @@ export function handleFollow(event: Follow): void {
 
   follower.save(); // Save the follower changes
 
+  // Create Alert
   let alert = new Alert(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
@@ -26,8 +27,18 @@ export function handleFollow(event: Follow): void {
   alert.createdAt = event.block.timestamp.toString();
   alert.save();
 
-  // handling for target
+  // Create FollowEvent
+  let followEvent = new FollowEvent(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  followEvent.eventType = "Follow";
+  followEvent.follower = follower.id;
+  followEvent.following = target.id;
+  followEvent.timestamp = event.block.timestamp;
+  followEvent.transactionHash = event.transaction.hash;
+  followEvent.save();
 
+  // handling for target
   let targetNewFollowers = target.followers;
   targetNewFollowers.push(follower.id);
   target.followers = targetNewFollowers;
@@ -52,6 +63,17 @@ export function handleUnfollow(event: Unfollow): void {
   );
 
   unfollower.save();
+
+  // Create FollowEvent for unfollow
+  let unfollowEvent = new FollowEvent(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  unfollowEvent.eventType = "Unfollow";
+  unfollowEvent.follower = unfollower.id;
+  unfollowEvent.following = target.id;
+  unfollowEvent.timestamp = event.block.timestamp;
+  unfollowEvent.transactionHash = event.transaction.hash;
+  unfollowEvent.save();
 
   // handling for target
   let targetNewFollowers = target.followers;

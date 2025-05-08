@@ -16,6 +16,7 @@ dataSources:
       entities:
         - User
         - Alert
+        - FollowEvent
       abis:
         - name: FollowRegistry
           file: FollowRegistry/abis/FollowRegistry.json

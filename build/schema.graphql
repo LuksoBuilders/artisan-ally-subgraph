@@ -186,3 +186,12 @@ type Alert @entity {
   payload: [String!]!
   createdAt: String!
 }
+
+type FollowEvent @entity {
+  id: Bytes!
+  eventType: String!
+  follower: User!
+  following: User!
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}
